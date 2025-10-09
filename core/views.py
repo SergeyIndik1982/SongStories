@@ -39,7 +39,7 @@ def generate(request):
     error = None
     if request.method == 'POST':
         prompt = request.POST.get('prompt', '').strip()
-        api_key = os.environ.get('MUSICGPT_API_KEY')
+        api_key = os.environ.get('ZGRKnaE2rH23gBLi8YxWBJydgt9dCNUpVlgQQHDKadgiWnI3U-YlUdJoKUycpjmxaw0JTPiYQsWHntR8zy5s0g')
         if not api_key:
             error = 'MUSICGPT_API_KEY not set in environment.'
         else:
