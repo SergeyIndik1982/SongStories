@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Story</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0A0A0C;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;flex-direction:column;min-height:100vh;}
+.container{flex:1;padding:20px;max-width:400px;margin:0 auto;}
+h1{font-size:20px;margin-bottom:20px;}
+.upload-box{border:2px dashed #333;border-radius:16px;padding:40px 20px;text-align:center;margin-bottom:24px;cursor:pointer;}
+.upload-box input{display:none;}
+.song-card{display:flex;align-items:center;background:#1A1A22;padding:12px;border-radius:14px;margin-bottom:24px;}
+.song-cover{width:60px;height:60px;background:#333;border-radius:10px;margin-right:14px;background-size:cover;background-position:center;}
+.song-title{font-weight:600;font-size:14px;}
+.song-artist{font-size:12px;opacity:0.7;}
+.generate-btn{width:100%;padding:16px;background:#7E5CFF;border:none;border-radius:50px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;}
+.mini-player{position:fixed;bottom:0;left:0;right:0;background:#16161D;color:#fff;padding:10px 16px;border-top-left-radius:20px;border-top-right-radius:20px;display:flex;flex-direction:column;z-index:1000;}
+.mini-player__content{display:flex;justify-content:space-between;align-items:center;}
+.mini-player__cover{width:50px;height:50px;border-radius:12px;background-size:cover;background-position:center;margin-right:12px;}
+.mini-player__meta{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.mini-player__title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mini-player__artist{font-size:12px;opacity:0.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mini-player__controls button{background:#7E5CFF;border:none;color:#fff;padding:8px 12px;border-radius:50px;margin-left:6px;cursor:pointer;}
+.mini-player__progress{height:4px;background:#333;margin-top:8px;border-radius:2px;position:relative;}
+.mini-player__progress-bar{height:100%;width:0%;background:#7E5CFF;border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Create Story</h1>
+
+<label class="upload-box">
+  Tap to upload video
+  <input type="file" id="videoInput" accept="video/*">
+</label>
+
+<div class="song-card">
+  <div class="song-cover" id="songCover"></div>
+  <div>
+    <div class="song-title" id="songTitle">Loading...</div>
+    <div class="song-artist" id="songArtist">Loading...</div>
+  </div>
+</div>
+
+<button class="generate-btn" id="generateBtn">Generate Story</button>
+</div>
+
+<!-- MINI PLAYER -->
+<div class="mini-player">
+  <div class="mini-player__content">
+    <div class="mini-player__cover" style="background-image:url('assets/cover.jpg')"></div>
+    <div class="mini-player__meta">
+      <div class="mini-player__title">Midnight Flow</div>
+      <div class="mini-player__artist">AI Rap Generator</div>
+    </div>
+    <div class="mini-player__controls">
+      <button>⏮</button>
+      <button id="miniPlayBtn">▶</button>
+      <button>⏭</button>
+    </div>
+  </div>
+  <div class="mini-player__progress">
+    <div class="mini-player__progress-bar" id="miniProgress"></div>
+  </div>
+</div>
+
+<script>
+// Получаем данные трека из URL
+const params = new URLSearchParams(window.location.search);
+const title = params.get("title") || "Unknown Track";
+const artist = params.get("artist") || "Unknown Artist";
+const cover = params.get("cover") || "";
+
+document.getElementById("songTitle").textContent = title;
+document.getElementById("songArtist").textContent = artist;
+if(cover) document.getElementById("songCover").style.backgroundImage = `url(${cover})`;
+
+document.getElementById("generateBtn").addEventListener("click", ()=>{
+  const videoParams = new URLSearchParams({title,artist,cover}).toString();
+  window.location.href = "videoscroll.html?" + videoParams;
+});
+
+// MINI PLAYER
+const miniPlayBtn = document.getElementById("miniPlayBtn");
+const miniProgress = document.getElementById("miniProgress");
+const audio = new Audio('assets/song.mp3');
+
+miniPlayBtn.addEventListener("click", ()=>{
+  if(audio.paused){audio.play(); miniPlayBtn.textContent="⏸";}
+  else{audio.pause(); miniPlayBtn.textContent="▶";}
+});
+
+audio.addEventListener("timeupdate", ()=>{
+  miniProgress.style.width = (audio.currentTime/audio.duration)*100 + "%";
+});
+</script>
+</body>
+</html>

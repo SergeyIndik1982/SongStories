@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:#0A0A0C;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  min-height:100vh;
+  padding-bottom:130px;
+}
+
+/* HEADER */
+.header{
+  padding:20px;
+  font-size:22px;
+  font-weight:600;
+}
+
+/* VIDEO HORIZONTAL SCROLL */
+.video-horizontal-scroll{
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  padding:0 20px 20px;
+  scroll-behavior:smooth;
+}
+
+.video-card{
+  min-width:180px;
+  height:280px;
+  border-radius:18px;
+  overflow:hidden;
+  flex-shrink:0;
+  background:#111;
+  position:relative;
+}
+
+.video-card video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity 0.4s ease;
+}
+
+.video-card video.playing{
+  opacity:1;
+}
+
+/* TRACK LIST */
+.tracks{
+  padding:0 20px;
+}
+
+.track{
+  background:#16161D;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  transition:transform 0.2s ease;
+}
+
+.track:active{
+  transform:scale(0.98);
+}
+
+.track-title{
+  font-size:16px;
+  font-weight:500;
+}
+
+.track-time{
+  font-size:14px;
+  opacity:0.6;
+}
+
+/* MINI PLAYER */
+.mini-player{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#16161D;
+  padding:12px 16px;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  display:flex;
+  flex-direction:column;
+  z-index:1000;
+}
+
+.mini-player__content{
+  display:flex;
+  align-items:center;
+}
+
+.mini-player__cover{
+  width:50px;
+  height:50px;
+  border-radius:12px;
+  background-size:cover;
+  background-position:center;
+  margin-right:12px;
+}
+
+.mini-player__meta{
+  flex:1;
+}
+
+.mini-player__title{
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.mini-player__artist{
+  font-size:12px;
+  opacity:0.7;
+}
+
+.mini-player__controls button{
+  background:#7E5CFF;
+  border:none;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:50px;
+  margin-left:6px;
+  cursor:pointer;
+}
+
+.mini-player__progress{
+  height:4px;
+  background:#333;
+  margin-top:8px;
+  border-radius:2px;
+}
+
+.mini-player__progress-bar{
+  height:100%;
+  width:0%;
+  background:#7E5CFF;
+  border-radius:2px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Discover Stories</div>
+
+<!-- VIDEOS FIRST -->
+<section class="video-horizontal-scroll">
+
+  <div class="video-card">
+    <video src="assets/story1.mp4"
+           poster="assets/videoplayer1.jpg"
+           muted loop playsinline></video>
+  </div>
+
+  <div class="video-card">
+    <video src="assets/story2.mp4"
+           poster="assets/videoplayer2.jpg"
+           muted loop playsinline></video>
+  </div>
+
+  <div class="video-card">
+    <video src="assets/story3.mp4"
+           poster="assets/videoplayer3.jpg"
+           muted loop playsinline></video>
+  </div>
+
+</section>
+
+<!-- TRACKS UNDER VIDEOS -->
+<section class="tracks">
+
+  <div class="track" onclick="openPlayer('Birthday Rap','AI Rap Generator','assets/videoplayer1.jpg')">
+    <div class="track-title">Birthday Rap</div>
+    <div class="track-time">2:45</div>
+  </div>
+
+  <div class="track" onclick="openPlayer('Wedding Flow','MC StoryBot','assets/videoplayer2.jpg')">
+    <div class="track-title">Wedding Flow</div>
+    <div class="track-time">3:12</div>
+  </div>
+
+  <div class="track" onclick="openPlayer('Funny Anniversary','AI Rap Generator','assets/videoplayer3.jpg')">
+    <div class="track-title">Funny Anniversary</div>
+    <div class="track-time">2:58</div>
+  </div>
+
+</section>
+
+<!-- MINI PLAYER -->
+<div class="mini-player">
+  <div class="mini-player__content">
+    <div class="mini-player__cover"
+         style="background-image:url('assets/videoplayer1.jpg')"></div>
+    <div class="mini-player__meta">
+      <div class="mini-player__title">Midnight Flow</div>
+      <div class="mini-player__artist">AI Rap Generator</div>
+    </div>
+    <div class="mini-player__controls">
+      <button>⏮</button>
+      <button id="miniPlayBtn">▶</button>
+      <button>⏭</button>
+    </div>
+  </div>
+  <div class="mini-player__progress">
+    <div class="mini-player__progress-bar" id="miniProgress"></div>
+  </div>
+</div>
+
+<script>
+/* OPEN PLAYER PAGE */
+function openPlayer(title, artist, cover){
+  const params = new URLSearchParams({title, artist, cover}).toString();
+  window.location.href = "player.html?" + params;
+}
+
+/* AUTOPLAY HORIZONTAL VIDEOS */
+document.querySelectorAll(".video-card video").forEach(video=>{
+  new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        video.play();
+        video.classList.add("playing");
+      }else{
+        video.pause();
+        video.classList.remove("playing");
+      }
+    });
+  },{threshold:0.6}).observe(video);
+});
+
+/* MINI PLAYER AUDIO */
+const audio = new Audio('assets/song.mp3');
+const miniPlayBtn = document.getElementById("miniPlayBtn");
+const miniProgress = document.getElementById("miniProgress");
+
+miniPlayBtn.addEventListener("click", ()=>{
+  if(audio.paused){
+    audio.play();
+    miniPlayBtn.textContent="⏸";
+  }else{
+    audio.pause();
+    miniPlayBtn.textContent="▶";
+  }
+});
+
+audio.addEventListener("timeupdate", ()=>{
+  if(audio.duration){
+    miniProgress.style.width =
+      (audio.currentTime/audio.duration)*100+"%";
+  }
+});
+</script>
+
+</body>
+</html>
